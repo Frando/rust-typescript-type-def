@@ -2,9 +2,7 @@ use serde::Serialize;
 use std::collections::{HashMap, HashSet};
 use typescript_type_def::{
     type_expr::{DefinedTypeInfo, Ident, TypeDefinition, TypeExpr, TypeInfo},
-    write_definition_file,
-    DefinitionFileOptions,
-    TypeDef,
+    write_definition_file, DefinitionFileOptions, TypeDef,
 };
 
 static TEST_OPTIONS: DefinitionFileOptions<'_> = DefinitionFileOptions {
@@ -195,9 +193,7 @@ export type Test10=({"type":"A";"value":{"a":string;"b":types.Usize;};}|{"type":
             serde_json::to_string(&Test10::B {
                 a: Test4::A(Test3(Test2(
                     Test {
-                        parent: Parent {
-                            foo_bar: 123
-                        },
+                        parent: Parent { foo_bar: 123 },
                         a: "foo".to_owned(),
                         b: None,
                         c: Some(vec![true, false]),
@@ -596,6 +592,30 @@ export type Test3={"bar":string;};
 export type ExternalStringWrapper=string;
 export type I16=number;
 export type Test=(types.Test3&{"a":string;"b":types.ExternalStringWrapper;"c":string;"d":types.I16;});
+}
+"#
+        );
+    }
+}
+
+#[cfg(feature = "json_value")]
+mod json_value {
+    use super::test_emit;
+    use serde::Serialize;
+    use typescript_type_def::TypeDef;
+    #[test]
+    fn json_value() {
+        #[derive(Serialize, TypeDef)]
+        struct Test {
+            a: String,
+            b: serde_json::Value,
+        }
+
+        assert_eq_str!(
+            test_emit::<Test>(),
+            r#"export default types;
+export namespace types{
+export type Test={"a":string;"b":any;};
 }
 "#
         );
