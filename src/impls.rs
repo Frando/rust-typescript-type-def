@@ -1,16 +1,8 @@
 use crate::{
     emit::TypeDef,
     type_expr::{
-        DefinedTypeInfo,
-        Ident,
-        NativeTypeInfo,
-        TypeArray,
-        TypeDefinition,
-        TypeExpr,
-        TypeInfo,
-        TypeName,
-        TypeTuple,
-        TypeUnion,
+        DefinedTypeInfo, Ident, NativeTypeInfo, TypeArray, TypeDefinition,
+        TypeExpr, TypeInfo, TypeName, TypeTuple, TypeUnion,
     },
 };
 
@@ -243,6 +235,6 @@ where
 }
 
 #[cfg(feature = "json_value")]
-impl_native!(serde_json::Value, "any");
+impl_native!(serde_json::Value, "unknown");
 #[cfg(feature = "json_value")]
 impl_map!(serde_json::Map);
