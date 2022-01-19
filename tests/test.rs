@@ -618,6 +618,28 @@ export type Test={"a":Usize;};
 "#
         );
     }
+
+    fn emit_expr() {
+        #[derive(Serialize, TypeDef)]
+        struct Message<T> {
+            op: String,
+            payload: T,
+        }
+
+        type StringMessage = Message<String>;
+        type BytesMessage = Message<Vec<u8>>;
+
+        let options = DefinitionFileOptions::default();
+        let mut s = vec![];
+        StringMessage::INFO.emit_expr(&mut s, options).unwrap();
+        assert_eq!("types.Message<string>", std::str::from_utf8(&s).unwrap());
+        let mut s = vec![];
+        BytesMessage::INFO.emit_expr(&mut s, options).unwrap();
+        assert_eq!(
+            "types.Message<(types.U8)[]>",
+            std::str::from_utf8(&s).unwrap()
+        );
+    }
 }
 
 #[cfg(feature = "json_value")]
@@ -641,6 +663,6 @@ export namespace types{
 export type Test={"a":string;"b":unknown;"c":number;};
 }
 "#
-        );
+        )
     }
 }
